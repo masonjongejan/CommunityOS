@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CommunityOS — The Operating System for Coaching Communities</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Syne:wght@400;500;600;700;800&family=Figtree:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Figtree', sans-serif;
+      background: #08090D;
+      color: #E8E3D8;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    :root {
+      --bg:            #08090D;
+      --bg-2:          #0C0F16;
+      --bg-light:      #F5F1E8;
+      --bg-light-2:    #EDE8DC;
+      --accent:        #BEF264;
+      --accent-hover:  #D4FF7A;
+      --accent-dim:    rgba(190,242,100,0.10);
+      --text:          #E8E3D8;
+      --text-dim:      #5E6270;
+      --text-muted:    #9CA0AC;
+      --text-dark:     #16181F;
+      --text-dark-dim: #5C6070;
+      --border-dark:   rgba(255,255,255,0.07);
+      --border-light:  rgba(0,0,0,0.09);
+      --gutter:        clamp(1.5rem, 5vw, 4rem);
+      --max:           1160px;
+    }
+
+    /* ── Nav ─────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.4rem var(--gutter);
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border-dark);
+      background: rgba(8,9,13,0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.92rem;
+      letter-spacing: 0.06em; color: var(--text); text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-cta {
+      font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.07em; color: var(--text-dim); text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.11); padding: 0.48rem 1rem; border-radius: 3px;
+      transition: color 180ms ease, border-color 180ms ease;
+    }
+    .nav-cta:hover { color: var(--text); border-color: rgba(255,255,255,0.28); }
+
+    /* ── Shared ──────────────────────────────────────── */
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+    .label {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.64rem; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1.75rem; display: block;
+    }
+    .label-amber { color: #C8A847; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      background: var(--accent); color: #0A0B0F;
+      font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.06em; padding: 0.88rem 1.9rem;
+      border: none; border-radius: 3px; text-decoration: none; cursor: pointer;
+      transition: background 180ms ease, transform 200ms ease;
+    }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 6px 28px rgba(190,242,100,0.22); }
+    .btn-primary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      color: var(--text-dim); font-family: 'Syne', sans-serif;
+      font-size: 0.78rem; font-weight: 500; letter-spacing: 0.05em;
+      text-decoration: none; transition: color 180ms ease;
+    }
+    .btn-ghost:hover { color: var(--text); }
+    .btn-ghost-dark {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      color: var(--text-dark-dim); font-family: 'Syne', sans-serif;
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em;
+      text-decoration: none; transition: color 180ms ease;
+    }
+    .btn-ghost-dark:hover { color: var(--text-dark); }
+
+    /* ── §1 HERO ─────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 8rem var(--gutter) 6rem;
+      position: relative; overflow: hidden;
+    }
+    #hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 55% 55% at 72% 48%, rgba(190,242,100,0.045) 0%, transparent 65%),
+        radial-gradient(ellipse 35% 40% at 50% 0%, rgba(255,255,255,0.015) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    #hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.036) 1px, transparent 1px);
+      background-size: 30px 30px;
+      pointer-events: none;
+      mask-image: radial-gradient(ellipse 65% 65% at 72% 50%, black 0%, transparent 68%);
+      -webkit-mask-image: radial-gradient(ellipse 65% 65% at 72% 50%, black 0%, transparent 68%);
+    }
+    .hero-inner {
+      max-width: var(--max); margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: center;
+      position: relative; z-index: 1;
+    }
+    .hero-h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 5.5vw, 6.4rem);
+      font-weight: 700; line-height: 0.98; letter-spacing: -0.01em;
+      color: var(--text); margin-bottom: 1.75rem;
+    }
+    .hero-h1 em { font-style: italic; color: var(--accent); }
+    .hero-sub {
+      font-size: 1.02rem; font-weight: 400;
+      color: var(--text-muted); line-height: 1.72;
+      max-width: 460px; margin-bottom: 2.5rem;
+    }
+    .hero-ctas { display: flex; align-items: center; gap: 1.75rem; flex-wrap: wrap; }
+
+    /* Hero visual — orbital OS diagram */
+    .hero-visual {
+      position: relative; height: 400px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .os-diagram {
+      position: relative; width: 320px; height: 320px;
+    }
+    .os-ring {
+      position: absolute; border-radius: 50%; border: 1px solid;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+    }
+    .ring-1 { width: 320px; height: 320px; border-color: rgba(190,242,100,0.07); }
+    .ring-2 { width: 208px; height: 208px; border-color: rgba(190,242,100,0.11); }
+    .ring-3 { width: 100px; height: 100px; border-color: rgba(190,242,100,0.18); }
+    .os-center {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 32px rgba(190,242,100,0.25);
+    }
+    .os-center-dot { width: 14px; height: 14px; border-radius: 50%; background: #08090D; }
+    .os-node-label {
+      position: absolute; font-family: 'JetBrains Mono', monospace;
+      font-size: 0.54rem; letter-spacing: 0.12em; color: rgba(190,242,100,0.45);
+      white-space: nowrap;
+    }
+    .nl-top    { top: -16px; left: 50%; transform: translateX(-50%); }
+    .nl-right  { top: 50%; right: -58px; transform: translateY(-50%); }
+    .nl-bottom { bottom: -16px; left: 50%; transform: translateX(-50%); }
+    .nl-left   { top: 50%; left: -60px; transform: translateY(-50%); }
+    .nl-tr     { top: 8px; right: 38px; }
+
+    /* data stream sidebar */
+    .data-stream {
+      position: absolute; right: -22px; top: 0px;
+      display: flex; flex-direction: column; gap: 7px;
+    }
+    .ds-row { display: flex; align-items: center; gap: 7px; }
+    .ds-lbl {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.52rem;
+      letter-spacing: 0.09em; color: var(--text-dim); width: 54px; text-align: right;
+    }
+    .ds-track {
+      width: 76px; height: 3px; background: rgba(255,255,255,0.05);
+      border-radius: 2px; overflow: hidden;
+    }
+    .ds-fill { height: 100%; border-radius: 2px; background: var(--accent); opacity: 0.55; }
+    .ds-val {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.52rem;
+      color: var(--accent); opacity: 0.75; width: 26px;
+    }
+    .ds-val-red { color: #F87171; opacity: 0.8; }
+
+    /* ── §2 PROBLEM ──────────────────────────────────── */
+    #problem {
+      background: var(--bg-light); color: var(--text-dark);
+      padding: 8rem var(--gutter);
+    }
+    .problem-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      font-weight: 700; line-height: 1.04; color: var(--text-dark);
+      margin-bottom: 3.5rem; max-width: 580px;
+    }
+    .problem-cols {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 3rem; margin-bottom: 3.5rem;
+    }
+    .col-heading {
+      font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--text-dark-dim); margin-bottom: 1.1rem;
+      padding-bottom: 0.7rem; border-bottom: 1px solid var(--border-light);
+    }
+    .tool-list { display: flex; flex-direction: column; gap: 0.55rem; }
+    .tool-item {
+      display: flex; align-items: center; gap: 0.7rem;
+      padding: 0.65rem 0.9rem;
+      background: rgba(0,0,0,0.03); border: 1px solid var(--border-light); border-radius: 3px;
+    }
+    .tool-dot { width: 5px; height: 5px; border-radius: 50%; background: #C8A847; flex-shrink: 0; }
+    .tool-text { font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; color: var(--text-dark); }
+    .blind-list { display: flex; flex-direction: column; gap: 0.55rem; }
+    .blind-item {
+      display: flex; align-items: flex-start; gap: 0.7rem;
+      padding: 0.65rem 0.9rem; opacity: 0.6;
+      background: rgba(0,0,0,0.025); border: 1px solid var(--border-light); border-radius: 3px;
+    }
+    .blind-x { font-size: 0.72rem; font-weight: 700; color: #B45309; flex-shrink: 0; margin-top: 1px; }
+    .blind-text { font-size: 0.88rem; color: var(--text-dark); line-height: 1.4; }
+    .problem-close {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+      font-style: italic; font-weight: 600; color: var(--text-dark);
+      line-height: 1.55; max-width: 660px;
+      padding-top: 2.5rem; border-top: 1px solid var(--border-light);
+    }
+
+    /* ── §3 SOLUTION ─────────────────────────────────── */
+    #solution {
+      background: var(--bg-2);
+      padding: 8rem var(--gutter);
+    }
+    .solution-grid {
+      max-width: var(--max); margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5rem; align-items: start;
+    }
+    .solution-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.8vw, 3.6rem);
+      font-weight: 700; line-height: 1.04; color: var(--text);
+      margin-bottom: 1.4rem;
+    }
+    .solution-body {
+      font-size: 0.98rem; color: var(--text-muted);
+      line-height: 1.76; margin-bottom: 2rem;
+    }
+    .outcome-list { display: flex; flex-direction: column; }
+    .outcome-item {
+      display: flex; align-items: flex-start; gap: 0.8rem;
+      padding: 0.8rem 0; border-bottom: 1px solid var(--border-dark);
+    }
+    .outcome-item:last-child { border-bottom: none; }
+    .outcome-check {
+      width: 17px; height: 17px; border-radius: 50%;
+      background: var(--accent-dim); border: 1px solid rgba(190,242,100,0.28);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .outcome-check svg { width: 8px; height: 8px; }
+    .outcome-text { font-size: 0.93rem; color: var(--text); line-height: 1.5; }
+
+    /* Dashboard mockup */
+    .dash-wrap {
+      background: #090B10;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 7px; overflow: hidden;
+      box-shadow: 0 28px 72px rgba(0,0,0,0.55);
+    }
+    .dash-bar {
+      background: #0D1018; padding: 0.8rem 1.1rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.055);
+    }
+    .dash-bar-title {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase;
+    }
+    .dash-live {
+      display: flex; align-items: center; gap: 0.38rem;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.58rem;
+      color: var(--accent); letter-spacing: 0.1em;
+    }
+    .live-dot {
+      width: 5px; height: 5px; border-radius: 50%; background: var(--accent);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+    .dash-body { padding: 1.1rem; }
+    .dash-section-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.55rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-dim); margin-bottom: 0.65rem;
+    }
+    .dash-col-heads {
+      display: grid; grid-template-columns: 1fr 58px 46px 56px;
+      gap: 0.4rem; padding: 0 0.65rem; margin-bottom: 0.45rem;
+    }
+    .dash-col-heads span {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.52rem;
+      letter-spacing: 0.1em; color: var(--text-dim);
+    }
+    .member-rows { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+    .member-row {
+      display: grid; grid-template-columns: 1fr 58px 46px 56px;
+      gap: 0.4rem; align-items: center;
+      padding: 0.48rem 0.65rem;
+      background: rgba(255,255,255,0.018);
+      border: 1px solid rgba(255,255,255,0.04); border-radius: 2px;
+    }
+    .member-row.risk-row {
+      background: rgba(248,113,113,0.04); border-color: rgba(248,113,113,0.16);
+    }
+    .m-name { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--text); }
+    .m-prog { height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+    .m-fill { height: 100%; border-radius: 2px; }
+    .fill-g { background: #4ADE80; }
+    .fill-y { background: #FBBF24; }
+    .fill-r { background: #F87171; }
+    .m-eng { font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; text-align: center; }
+    .eng-g { color: #4ADE80; } .eng-y { color: #FBBF24; } .eng-r { color: #F87171; }
+    .m-badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.54rem;
+      letter-spacing: 0.07em; padding: 0.16rem 0.38rem; border-radius: 2px; text-align: center;
+    }
+    .badge-low { background: rgba(74,222,128,0.11); color: #4ADE80; }
+    .badge-med { background: rgba(251,191,36,0.11); color: #FBBF24; }
+    .badge-high { background: rgba(248,113,113,0.13); color: #F87171; }
+    .health-strip {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 0.65rem;
+      background: rgba(190,242,100,0.05); border: 1px solid rgba(190,242,100,0.1); border-radius: 2px;
+    }
+    .health-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.56rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim);
+    }
+    .health-bar { width: 110px; height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; }
+    .health-fill { width: 74%; height: 100%; background: var(--accent); opacity: 0.65; }
+    .health-score {
+      font-family: 'JetBrains Mono', monospace; font-size: 1.05rem;
+      font-weight: 500; color: var(--accent); letter-spacing: -0.02em;
+    }
+    .health-score small { font-size: 0.6rem; color: var(--text-dim); font-weight: 400; }
+
+    /* ── §4 HOW IT WORKS ─────────────────────────────── */
+    #how {
+      background: var(--bg-light); color: var(--text-dark);
+      padding: 8rem var(--gutter);
+    }
+    .how-inner { max-width: var(--max); margin: 0 auto; }
+    .how-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.8rem);
+      font-weight: 700; line-height: 1.04; color: var(--text-dark);
+      margin-bottom: 4rem; max-width: 500px;
+    }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.5rem; }
+    .step-num-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; font-weight: 500;
+      letter-spacing: 0.14em; color: #C8A847; margin-bottom: 1.4rem;
+      display: flex; align-items: center; gap: 0.7rem;
+    }
+    .step-num-label::after {
+      content: ''; display: block; width: 22px; height: 1px; background: rgba(200,168,71,0.3);
+    }
+    .step-title {
+      font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 700;
+      color: var(--text-dark); margin-bottom: 0.8rem; letter-spacing: -0.01em;
+    }
+    .step-body { font-size: 0.91rem; color: var(--text-dark-dim); line-height: 1.72; }
+    .step-tag {
+      display: inline-block; margin-top: 1rem;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em;
+      padding: 0.28rem 0.6rem;
+      background: rgba(0,0,0,0.05); border: 1px solid var(--border-light); border-radius: 2px;
+      color: var(--text-dark-dim); text-transform: uppercase;
+    }
+
+    /* ── §5 WHO IT'S FOR ─────────────────────────────── */
+    #who { background: var(--bg); padding: 8rem var(--gutter); }
+    .who-inner { max-width: var(--max); margin: 0 auto; }
+    .who-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.8rem);
+      font-weight: 700; line-height: 1.04; color: var(--text);
+      margin-bottom: 3.5rem;
+    }
+    .who-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-bottom: 3.5rem; }
+    .who-col-head {
+      font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--text-dim); margin-bottom: 1.1rem;
+      padding-bottom: 0.7rem; border-bottom: 1px solid var(--border-dark);
+    }
+    .community-list { display: flex; flex-direction: column; }
+    .community-item {
+      padding: 0.82rem 0; font-size: 0.97rem; color: var(--text);
+      border-bottom: 1px solid var(--border-dark);
+    }
+    .community-item:last-child { border-bottom: none; }
+    .criteria-list { display: flex; flex-direction: column; gap: 0.65rem; }
+    .criteria-item {
+      display: flex; align-items: flex-start; gap: 0.8rem;
+      padding: 0.72rem 0.9rem;
+      background: rgba(255,255,255,0.018); border: 1px solid var(--border-dark); border-radius: 3px;
+    }
+    .criteria-arrow { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+    .criteria-text { font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; }
+    .who-trust {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(0.95rem, 1.5vw, 1.12rem);
+      font-style: italic; color: var(--text-dim);
+      max-width: 560px; line-height: 1.65;
+      padding-top: 2rem; border-top: 1px solid var(--border-dark);
+      margin-bottom: 2rem;
+    }
+
+    /* ── §6 IMPLEMENTATION ───────────────────────────── */
+    #implementation {
+      background: var(--bg-light-2); color: var(--text-dark);
+      padding: 8rem var(--gutter);
+    }
+    .impl-inner { max-width: var(--max); margin: 0 auto; }
+    .impl-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 2rem; flex-wrap: wrap; margin-bottom: 4rem;
+    }
+    .impl-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.8vw, 3.4rem);
+      font-weight: 700; line-height: 1.04; color: var(--text-dark);
+      max-width: 500px;
+    }
+    .timeline-badge { text-align: right; flex-shrink: 0; }
+    .timeline-num {
+      font-family: 'Cormorant Garamond', serif; font-size: 2.8rem;
+      font-weight: 700; line-height: 1; color: var(--text-dark); letter-spacing: -0.02em;
+    }
+    .timeline-unit {
+      font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dark-dim);
+      margin-top: 0.2rem;
+    }
+    .impl-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+    .impl-step { padding-right: 2rem; }
+    .impl-step:last-child { padding-right: 0; }
+    .impl-step-num {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; font-weight: 500;
+      letter-spacing: 0.14em; color: #C8A847; display: block; margin-bottom: 1.4rem;
+    }
+    .impl-step-title {
+      font-family: 'Syne', sans-serif; font-size: 0.92rem; font-weight: 700;
+      color: var(--text-dark); margin-bottom: 0.6rem; letter-spacing: -0.01em;
+    }
+    .impl-step-body { font-size: 0.84rem; color: var(--text-dark-dim); line-height: 1.65; }
+
+    /* ── §7 CTA ──────────────────────────────────────── */
+    #cta {
+      background: var(--bg); padding: 10rem var(--gutter);
+      text-align: center; position: relative; overflow: hidden;
+    }
+    #cta::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 48% 55% at 50% 50%, rgba(190,242,100,0.048) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .cta-inner { max-width: 640px; margin: 0 auto; position: relative; }
+    .cta-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 4.5vw, 4.4rem);
+      font-weight: 700; line-height: 1.04; color: var(--text); margin-bottom: 1.2rem;
+    }
+    .cta-body {
+      font-size: 1rem; color: var(--text-muted); line-height: 1.72;
+      max-width: 460px; margin: 0 auto 2.5rem;
+    }
+    .cta-cluster { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; }
+    .cta-friction {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.11em; text-transform: uppercase; color: var(--text-dim);
+    }
+
+    /* ── Footer ──────────────────────────────────────── */
+    footer {
+      background: var(--bg); border-top: 1px solid var(--border-dark);
+      padding: 1.75rem var(--gutter);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-logo {
+      font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.06em; color: var(--text-dim);
+    }
+    .footer-logo span { color: var(--accent); opacity: 0.6; }
+    .footer-copy {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.58rem;
+      letter-spacing: 0.08em; color: var(--text-dim); opacity: 0.45;
+    }
+
+    /* ── Motion init ─────────────────────────────────── */
+    .fade { opacity: 0; }
+    /* Hero headline spans — inline-block for clean clip-path */
+    #hl1, #hl2, #hl3 { display: inline-block; }
+
+    /* ── Hover interactions ──────────────────────────── */
+    .community-item {
+      transition: color 180ms ease, padding-left 200ms ease, transform 200ms ease;
+    }
+    .community-item:hover { color: var(--text); padding-left: 0.45rem; }
+
+    .criteria-item {
+      transition: background 180ms ease, border-color 180ms ease, transform 200ms ease;
+    }
+    .criteria-item:hover {
+      background: rgba(255,255,255,0.032);
+      border-color: rgba(190,242,100,0.22);
+      transform: translateX(4px);
+    }
+
+    .tool-item { transition: background 180ms ease, border-color 180ms ease; }
+    .tool-item:hover { background: rgba(0,0,0,0.055); border-color: rgba(200,168,71,0.3); }
+
+    .blind-item { transition: opacity 200ms ease; }
+    .blind-item:hover { opacity: 0.88 !important; }
+
+    .outcome-item { transition: border-color 180ms ease, transform 180ms ease; }
+    .outcome-item:hover { border-color: rgba(190,242,100,0.22); transform: translateX(4px); }
+
+    .step { transition: transform 220ms ease; }
+    .step:hover { transform: translateY(-4px); }
+
+    .impl-step { transition: transform 220ms ease; }
+    .impl-step:hover { transform: translateY(-4px); }
+
+    .member-row { transition: background 180ms ease, border-color 180ms ease; }
+    .member-row:hover { background: rgba(255,255,255,0.032); border-color: rgba(255,255,255,0.07); }
+
+    .nav-cta:hover { color: var(--accent); border-color: rgba(190,242,100,0.3); }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 920px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      .problem-cols { grid-template-columns: 1fr; gap: 2.5rem; }
+      .solution-grid { grid-template-columns: 1fr; gap: 3.5rem; }
+      .steps { grid-template-columns: 1fr; gap: 2.5rem; }
+      .who-cols { grid-template-columns: 1fr; gap: 2.5rem; }
+      .impl-steps { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+      .impl-header { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 560px) {
+      .impl-steps { grid-template-columns: 1fr; gap: 2rem; }
+      .impl-step { padding-right: 0; }
+      footer { flex-direction: column; gap: 0.65rem; text-align: center; }
+      .hero-ctas { flex-direction: column; align-items: flex-start; gap: 1.1rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Community<span>OS</span></a>
+  <a href="https://calendly.com/masonjongejan2601/communityos" target="_blank" rel="noopener" class="nav-cta">Book a CommunityOS Strategy Session</a>
+</nav>
+
+<!-- §1 HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <span class="label fade" id="hero-label">001 / Infrastructure</span>
+      <h1 class="hero-h1">
+        <span id="hl1">The Operating</span><br>
+        <span id="hl2">System for <em>Coaching</em></span><br>
+        <span id="hl3">Communities.</span>
+      </h1>
+      <p class="hero-sub fade">
+        CommunityOS is a custom-built AI operating system that gives mastermind and coaching program operators real visibility into member progress, engagement, and churn risk — built for high-ticket communities with 30–500 members.
+      </p>
+      <div class="hero-ctas fade">
+        <a href="https://calendly.com/masonjongejan2601/communityos" target="_blank" rel="noopener" class="btn-primary">Book a CommunityOS Strategy Session</a>
+        <a href="#cta" class="btn-ghost">See if CommunityOS fits your community ↓</a>
+      </div>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <div class="os-diagram">
+        <div class="os-ring ring-1"></div>
+        <div class="os-ring ring-2"></div>
+        <div class="os-ring ring-3"></div>
+        <div class="os-center"><div class="os-center-dot"></div></div>
+        <svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 320 320" fill="none">
+          <line x1="160" y1="160" x2="160" y2="0"   stroke="rgba(190,242,100,0.11)" stroke-width="1" stroke-dasharray="4 5"/>
+          <line x1="160" y1="160" x2="320" y2="160" stroke="rgba(190,242,100,0.11)" stroke-width="1" stroke-dasharray="4 5"/>
+          <line x1="160" y1="160" x2="160" y2="320" stroke="rgba(190,242,100,0.11)" stroke-width="1" stroke-dasharray="4 5"/>
+          <line x1="160" y1="160" x2="0"   y2="160" stroke="rgba(190,242,100,0.11)" stroke-width="1" stroke-dasharray="4 5"/>
+          <line x1="160" y1="160" x2="274" y2="46"  stroke="rgba(190,242,100,0.07)" stroke-width="1" stroke-dasharray="4 5"/>
+          <circle cx="160" cy="0"   r="4" fill="#BEF264" opacity="0.45"/>
+          <circle cx="320" cy="160" r="4" fill="#BEF264" opacity="0.45"/>
+          <circle cx="160" cy="320" r="4" fill="#BEF264" opacity="0.45"/>
+          <circle cx="0"   cy="160" r="4" fill="#BEF264" opacity="0.45"/>
+          <circle cx="274" cy="46"  r="3" fill="#BEF264" opacity="0.3"/>
+        </svg>
+        <span class="os-node-label nl-top">SLACK</span>
+        <span class="os-node-label nl-right">CRM</span>
+        <span class="os-node-label nl-bottom">FORMS</span>
+        <span class="os-node-label nl-left">SHEETS</span>
+        <span class="os-node-label nl-tr">CALLS</span>
+      </div>
+      <div class="data-stream">
+        <div class="ds-row">
+          <span class="ds-lbl">RETENTION</span>
+          <div class="ds-track"><div class="ds-fill" style="width:82%"></div></div>
+          <span class="ds-val">82%</span>
+        </div>
+        <div class="ds-row">
+          <span class="ds-lbl">ENGAGEMENT</span>
+          <div class="ds-track"><div class="ds-fill" style="width:67%"></div></div>
+          <span class="ds-val">67%</span>
+        </div>
+        <div class="ds-row">
+          <span class="ds-lbl">AT RISK</span>
+          <div class="ds-track"><div class="ds-fill" style="width:14%;background:#F87171;opacity:0.65"></div></div>
+          <span class="ds-val ds-val-red">14%</span>
+        </div>
+        <div class="ds-row">
+          <span class="ds-lbl">HEALTH</span>
+          <div class="ds-track"><div class="ds-fill" style="width:74%"></div></div>
+          <span class="ds-val">74%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §2 PROBLEM -->
+<section id="problem">
+  <div class="container">
+    <span class="label label-amber fade">002 / The Problem</span>
+    <h2 class="problem-h2 fade">Most coaching communities operate blind.</h2>
+    <div class="problem-cols">
+      <div class="fade">
+        <p class="col-heading">Data lives in</p>
+        <div class="tool-list">
+          <div class="tool-item"><div class="tool-dot"></div><span class="tool-text">Slack conversations</span></div>
+          <div class="tool-item"><div class="tool-dot"></div><span class="tool-text">Check-in forms</span></div>
+          <div class="tool-item"><div class="tool-dot"></div><span class="tool-text">Spreadsheets</span></div>
+          <div class="tool-item"><div class="tool-dot"></div><span class="tool-text">CRM notes</span></div>
+          <div class="tool-item"><div class="tool-dot"></div><span class="tool-text">Coaching calls</span></div>
+        </div>
+      </div>
+      <div class="fade">
+        <p class="col-heading">Operators cannot easily identify</p>
+        <div class="blind-list">
+          <div class="blind-item"><span class="blind-x">✕</span><span class="blind-text">Which members are progressing</span></div>
+          <div class="blind-item"><span class="blind-x">✕</span><span class="blind-text">Who is getting stuck</span></div>
+          <div class="blind-item"><span class="blind-x">✕</span><span class="blind-text">Who is disengaging</span></div>
+          <div class="blind-item"><span class="blind-x">✕</span><span class="blind-text">What patterns exist across the community</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="problem-close fade">
+      "This lack of visibility makes it difficult to intervene early, improve member results, and protect retention."
+    </p>
+  </div>
+</section>
+
+<!-- §3 SOLUTION -->
+<section id="solution">
+  <div class="solution-grid container">
+    <div>
+      <span class="label fade">003 / The Concept</span>
+      <h2 class="solution-h2 fade">Introducing CommunityOS.</h2>
+      <p class="solution-body fade">
+        CommunityOS is a centralized operating system designed specifically for coaching communities and masterminds. Instead of managing member data across disconnected tools, CommunityOS brings everything together into a single system — allowing operators to see the health of their community in real time.
+      </p>
+      <div class="outcome-list fade">
+        <div class="outcome-item">
+          <div class="outcome-check"><svg viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#BEF264" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="outcome-text">Track member progress and identify where they are struggling</span>
+        </div>
+        <div class="outcome-item">
+          <div class="outcome-check"><svg viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#BEF264" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="outcome-text">Identify who is actively participating and who may be disengaging</span>
+        </div>
+        <div class="outcome-item">
+          <div class="outcome-check"><svg viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#BEF264" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="outcome-text">See patterns across the community revealing common challenges members face</span>
+        </div>
+        <div class="outcome-item">
+          <div class="outcome-check"><svg viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#BEF264" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="outcome-text">Detect disengagement before members drop out, allowing earlier intervention</span>
+        </div>
+        <div class="outcome-item">
+          <div class="outcome-check"><svg viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#BEF264" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="outcome-text">Understand community health as a whole instead of relying on scattered signals</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard mockup -->
+    <div class="fade">
+      <div class="dash-wrap">
+        <div class="dash-bar">
+          <span class="dash-bar-title">Community Health Dashboard</span>
+          <div class="dash-live"><div class="live-dot"></div>LIVE</div>
+        </div>
+        <div class="dash-body">
+          <p class="dash-section-label">Member Overview</p>
+          <div class="dash-col-heads">
+            <span>MEMBER</span><span>PROGRESS</span><span style="text-align:center">ENG.</span><span style="text-align:center">RISK</span>
+          </div>
+          <div class="member-rows">
+            <div class="member-row">
+              <span class="m-name">J. Martinez</span>
+              <div class="m-prog"><div class="m-fill fill-g" style="width:88%"></div></div>
+              <span class="m-eng eng-g" style="text-align:center">High</span>
+              <span class="m-badge badge-low" style="text-align:center">LOW</span>
+            </div>
+            <div class="member-row">
+              <span class="m-name">K. Osei</span>
+              <div class="m-prog"><div class="m-fill fill-y" style="width:54%"></div></div>
+              <span class="m-eng eng-y" style="text-align:center">Mid</span>
+              <span class="m-badge badge-med" style="text-align:center">MED</span>
+            </div>
+            <div class="member-row risk-row">
+              <span class="m-name">A. Brennan</span>
+              <div class="m-prog"><div class="m-fill fill-r" style="width:22%"></div></div>
+              <span class="m-eng eng-r" style="text-align:center">Low</span>
+              <span class="m-badge badge-high" style="text-align:center">HIGH</span>
+            </div>
+            <div class="member-row">
+              <span class="m-name">S. Patel</span>
+              <div class="m-prog"><div class="m-fill fill-g" style="width:71%"></div></div>
+              <span class="m-eng eng-g" style="text-align:center">High</span>
+              <span class="m-badge badge-low" style="text-align:center">LOW</span>
+            </div>
+            <div class="member-row">
+              <span class="m-name">L. Chen</span>
+              <div class="m-prog"><div class="m-fill fill-y" style="width:46%"></div></div>
+              <span class="m-eng eng-y" style="text-align:center">Mid</span>
+              <span class="m-badge badge-med" style="text-align:center">MED</span>
+            </div>
+          </div>
+          <div class="health-strip">
+            <span class="health-label">Community Health</span>
+            <div class="health-bar"><div class="health-fill"></div></div>
+            <span class="health-score">74<small>%</small></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §4 HOW IT WORKS -->
+<section id="how">
+  <div class="how-inner">
+    <span class="label label-amber fade">004 / How It Works</span>
+    <h2 class="how-h2 fade">From scattered data to operational clarity.</h2>
+    <div class="steps">
+      <div class="step fade">
+        <div class="step-num-label">01</div>
+        <h3 class="step-title">Connect</h3>
+        <p class="step-body">We integrate with the tools your community already uses — Slack, check-in forms, CRM, spreadsheets. No migration required on your end.</p>
+        <span class="step-tag">No migration</span>
+      </div>
+      <div class="step fade">
+        <div class="step-num-label">02</div>
+        <h3 class="step-title">Analyze</h3>
+        <p class="step-body">We build a centralized system that collects and organizes your community data, then surfaces engagement patterns, bottlenecks, and early churn signals.</p>
+        <span class="step-tag">AI-powered</span>
+      </div>
+      <div class="step fade">
+        <div class="step-num-label">03</div>
+        <h3 class="step-title">Operate</h3>
+        <p class="step-body">You receive a clear operating dashboard giving full visibility into member progress, engagement, and community health — updated continuously.</p>
+        <span class="step-tag">Real-time</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §5 WHO IT'S FOR -->
+<section id="who">
+  <div class="who-inner">
+    <span class="label fade">005 / Who It's For</span>
+    <h2 class="who-h2 fade">Built for high-ticket coaching communities.</h2>
+    <div class="who-cols">
+      <div>
+        <p class="who-col-head">Community types</p>
+        <div class="community-list fade">
+          <div class="community-item">Entrepreneurship masterminds</div>
+          <div class="community-item">Agency masterminds</div>
+          <div class="community-item">Ecommerce coaching communities</div>
+          <div class="community-item">Creator education programs</div>
+          <div class="community-item">Business coaching groups</div>
+          <div class="community-item">Founder accelerators</div>
+        </div>
+      </div>
+      <div>
+        <p class="who-col-head">These programs typically have</p>
+        <div class="criteria-list fade">
+          <div class="criteria-item"><span class="criteria-arrow">→</span><span class="criteria-text">30–500 active members</span></div>
+          <div class="criteria-item"><span class="criteria-arrow">→</span><span class="criteria-text">Programs priced between $3k and $25k</span></div>
+          <div class="criteria-item"><span class="criteria-arrow">→</span><span class="criteria-text">Active coaching, accountability, and check-ins</span></div>
+          <div class="criteria-item"><span class="criteria-arrow">→</span><span class="criteria-text">Operators who want member success to be measurable</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="who-trust fade">
+      "When communities reach this size, visibility into member progress becomes critical. CommunityOS provides the operating system that allows these programs to scale without losing oversight."
+    </p>
+    <a href="https://calendly.com/masonjongejan2601/communityos" target="_blank" rel="noopener" class="btn-ghost fade">Book a CommunityOS Strategy Session →</a>
+  </div>
+</section>
+
+<!-- §6 IMPLEMENTATION -->
+<section id="implementation">
+  <div class="impl-inner">
+    <span class="label label-amber fade">006 / Implementation</span>
+    <div class="impl-header">
+      <h2 class="impl-h2 fade">How CommunityOS is implemented.</h2>
+      <div class="timeline-badge fade">
+        <div class="timeline-num">4–6</div>
+        <div class="timeline-unit">Week Timeline</div>
+      </div>
+    </div>
+    <div class="impl-steps">
+      <div class="impl-step fade">
+        <span class="impl-step-num">01</span>
+        <h3 class="impl-step-title">System Design</h3>
+        <p class="impl-step-body">We map how your community currently tracks members, check-ins, and engagement to design the right system for your program.</p>
+      </div>
+      <div class="impl-step fade">
+        <span class="impl-step-num">02</span>
+        <h3 class="impl-step-title">Infrastructure Setup</h3>
+        <p class="impl-step-body">We build the centralized system that collects and organizes community data from all your existing tools.</p>
+      </div>
+      <div class="impl-step fade">
+        <span class="impl-step-num">03</span>
+        <h3 class="impl-step-title">Insight Layer</h3>
+        <p class="impl-step-body">The AI analysis layer is configured to surface engagement patterns, community bottlenecks, and early churn signals specific to your program.</p>
+      </div>
+      <div class="impl-step fade">
+        <span class="impl-step-num">04</span>
+        <h3 class="impl-step-title">Operator Dashboard</h3>
+        <p class="impl-step-body">You receive a clear operating dashboard that gives full visibility into your community — and we walk your team through how to run it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §7 FINAL CTA -->
+<section id="cta">
+  <div class="cta-inner">
+    <span class="label" style="display:block;text-align:center;" id="cta-label">007 / Get Started</span>
+    <h2 class="cta-h2 fade">See if CommunityOS fits your community.</h2>
+    <p class="cta-body fade">If you operate a high-ticket coaching community or mastermind and want clearer visibility into member progress, engagement, and retention — book a short strategy call to explore whether this system makes sense for your program.</p>
+    <div class="cta-cluster fade">
+      <a href="https://calendly.com/masonjongejan2601/communityos" target="_blank" rel="noopener" class="btn-primary" style="font-size:0.88rem;padding:1rem 2.4rem;">Book a CommunityOS Strategy Session</a>
+      <span class="cta-friction">we can only implement CommunityOS for a limited number of communities at a time</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">Community<span>OS</span></span>
+  <span class="footer-copy">© 2025 CommunityOS</span>
+</footer>
+
+<script>
+  /*
+   * Motion System — CommunityOS Landing Page
+   * Aesthetic calibration: confident + clinical / dark editorial
+   * Library: GSAP 3.12.5 + ScrollTrigger + CSS hover
+   *
+   * Core fix: all .fade elements start at CSS opacity:0
+   * gsap.from() reads 0 as the natural state → animates 0→0 (invisible forever)
+   * Solution: gsap.fromTo() with explicit opacity:1 as the "to" value
+   */
+  gsap.registerPlugin(ScrollTrigger);
+
+  const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+  if (!noMotion) {
+
+  // ─── NAV — slides down from top on load ─────────────
+  gsap.fromTo('nav',
+    { y: -56, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out', delay: 0.08 }
+  );
+
+  // ─── HERO — staggered line reveals on load ───────────
+  // Note: #hl1/2/3 have NO .fade class → gsap.from() works (reads natural opacity:1)
+  // Note: #hero-label, .hero-sub, .hero-ctas HAVE .fade → must use fromTo()
+  const heroTl = gsap.timeline({ delay: 0.3 });
+  heroTl
+    .fromTo('#hero-label',
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' }
+    )
+    .from('#hl1', { clipPath: 'inset(0 0 100% 0)', duration: 0.82, ease: 'expo.out' }, 0.1)
+    .from('#hl2', { clipPath: 'inset(0 0 100% 0)', duration: 0.82, ease: 'expo.out' }, '-=0.5')
+    .from('#hl3', { clipPath: 'inset(0 0 100% 0)', duration: 0.82, ease: 'expo.out' }, '-=0.5')
+    .fromTo('#hero .hero-sub',
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
+      '-=0.32'
+    )
+    .fromTo('#hero .hero-ctas',
+      { opacity: 0, y: 14 },
+      { opacity: 1, y: 0, duration: 0.52, ease: 'power2.out' },
+      '-=0.28'
+    )
+    .fromTo('.hero-visual',
+      { opacity: 0, scale: 0.96 },
+      { opacity: 1, scale: 1, duration: 0.9, ease: 'power2.out' },
+      '-=0.65'
+    );
+
+  // ─── PROBLEM — columns slide in from sides ───────────
+  gsap.timeline({
+    scrollTrigger: { trigger: '#problem', start: 'top 78%', toggleActions: 'play none none none' }
+  })
+    .fromTo('#problem .label',
+      { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.42, ease: 'power2.out' })
+    .fromTo('.problem-h2',
+      { opacity: 0, y: isMobile ? 16 : 28 },
+      { opacity: 1, y: 0, duration: 0.65, ease: 'power2.out' }, '-=0.1')
+    .fromTo('#problem .problem-cols > div:first-child',
+      { opacity: 0, x: isMobile ? 0 : -24, y: isMobile ? 16 : 0 },
+      { opacity: 1, x: 0, y: 0, duration: 0.62, ease: 'power2.out' }, '-=0.2')
+    .fromTo('#problem .problem-cols > div:last-child',
+      { opacity: 0, x: isMobile ? 0 : 24, y: isMobile ? 16 : 0 },
+      { opacity: 1, x: 0, y: 0, duration: 0.62, ease: 'power2.out' }, '-=0.5')
+    .fromTo('.problem-close',
+      { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.58, ease: 'power2.out' }, '-=0.2');
+
+  // ─── SOLUTION — text sequence + dashboard rises up ───
+  gsap.timeline({
+    scrollTrigger: { trigger: '#solution', start: 'top 78%', toggleActions: 'play none none none' }
+  })
+    .fromTo('#solution .label',
+      { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.42, ease: 'power2.out' })
+    .fromTo('.solution-h2',
+      { opacity: 0, y: isMobile ? 16 : 26 },
+      { opacity: 1, y: 0, duration: 0.65, ease: 'power2.out' }, '-=0.1')
+    .fromTo('.solution-body',
+      { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.2')
+    .fromTo('.outcome-list',
+      { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.2')
+    // Animate the .fade wrapper div that contains .dash-wrap (not .dash-wrap directly)
+    .fromTo('.solution-grid > div:last-child',
+      { opacity: 0, y: isMobile ? 22 : 44, scale: 0.97 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.75, ease: 'power2.out' }, '-=0.45');
+
+  // Member rows stagger — x-axis slide in
+  gsap.fromTo('.member-row',
+    { opacity: 0, x: -12 },
+    {
+      opacity: 1, x: 0, duration: 0.42, ease: 'power2.out', stagger: 0.07,
+      scrollTrigger: { trigger: '.member-rows', start: 'top 84%', toggleActions: 'play none none none' }
+    }
+  );
+
+  // ─── HOW IT WORKS — steps stagger across ─────────────
+  gsap.timeline({
+    scrollTrigger: { trigger: '#how', start: 'top 80%', toggleActions: 'play none none none' }
+  })
+    .fromTo('#how .label',
+      { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.42, ease: 'power2.out' })
+    .fromTo('.how-h2',
+      { opacity: 0, y: isMobile ? 16 : 26 },
+      { opacity: 1, y: 0, duration: 0.65, ease: 'power2.out' }, '-=0.1')
+    .fromTo('.step',
+      { opacity: 0, y: isMobile ? 14 : 30 },
+      { opacity: 1, y: 0, duration: 0.62, ease: 'power2.out', stagger: 0.12 }, '-=0.2');
+
+  // ─── WHO IT'S FOR — two-column stagger ───────────────
+  gsap.timeline({
+    scrollTrigger: { trigger: '#who', start: 'top 80%', toggleActions: 'play none none none' }
+  })
+    .fromTo('#who .label',
+      { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.42, ease: 'power2.out' })
+    .fromTo('.who-h2',
+      { opacity: 0, y: isMobile ? 16 : 26 },
+      { opacity: 1, y: 0, duration: 0.65, ease: 'power2.out' }, '-=0.1')
+    .fromTo('.community-list',
+      { opacity: 0, y: isMobile ? 12 : 22 },
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.2')
+    .fromTo('.criteria-list',
+      { opacity: 0, y: isMobile ? 12 : 22 },
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.45')
+    .fromTo('.who-trust',
+      { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, '-=0.2')
+    .fromTo('#who .btn-ghost',
+      { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' }, '-=0.2');
+
+  // ─── IMPLEMENTATION — header + 4-step stagger ────────
+  gsap.timeline({
+    scrollTrigger: { trigger: '#implementation', start: 'top 80%', toggleActions: 'play none none none' }
+  })
+    .fromTo('#implementation .label',
+      { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.42, ease: 'power2.out' })
+    .fromTo('.impl-h2',
+      { opacity: 0, y: isMobile ? 16 : 26 },
+      { opacity: 1, y: 0, duration: 0.65, ease: 'power2.out' }, '-=0.1')
+    .fromTo('.timeline-badge',
+      { opacity: 0, scale: 0.88 },
+      { opacity: 1, scale: 1, duration: 0.55, ease: 'power2.out' }, '-=0.4')
+    .fromTo('.impl-step',
+      { opacity: 0, y: isMobile ? 12 : 26 },
+      { opacity: 1, y: 0, duration: 0.58, ease: 'power2.out', stagger: 0.10 }, '-=0.2');
+
+  // ─── FINAL CTA — sequence label → h2 → body → button ─
+  gsap.timeline({
+    scrollTrigger: { trigger: '#cta', start: 'top 80%', toggleActions: 'play none none none' }
+  })
+    .fromTo('#cta-label',
+      { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.42, ease: 'power2.out' })
+    .fromTo('.cta-h2',
+      { opacity: 0, y: isMobile ? 18 : 32 },
+      { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.1')
+    .fromTo('.cta-body',
+      { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.25')
+    .fromTo('.cta-cluster',
+      { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.52, ease: 'power2.out' }, '-=0.22');
+
+  } else {
+    // prefers-reduced-motion: reveal everything immediately
+    gsap.set('.fade', { opacity: 1 });
+  }
+</script>
+</body>
+</html>
